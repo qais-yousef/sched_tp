@@ -12,7 +12,7 @@ static inline struct cfs_rq *__trace_sched_group_cfs_rq(struct sched_entity *se)
 #endif
 }
 
-static void sched_load_rq(void *data, int cpu, const char* path, struct sched_avg *avg)
+static void sched_load_cfs_rq(void *data, int cpu, const char* path, struct sched_avg *avg)
 {
 	if (!path)
 		path = "(null)";
@@ -44,8 +44,8 @@ static void sched_overutilized(void *data, int overutilized)
 
 static int lisa_tp_init(void)
 {
-	register_trace_sched_load_rq(sched_load_rq, NULL);
-	register_trace_sched_load_se(sched_load_se, NULL);
+	register_trace_pelt_rq(sched_load_cfs_rq, NULL);
+	register_trace_pelt_se(sched_load_se, NULL);
 	register_trace_sched_overutilized(sched_overutilized, NULL);
 
 	return 0;
@@ -53,8 +53,8 @@ static int lisa_tp_init(void)
 
 void lisa_tp_finish(void)
 {
-	unregister_trace_sched_load_rq(sched_load_rq, NULL);
-	unregister_trace_sched_load_se(sched_load_se, NULL);
+	unregister_trace_pelt_rq(sched_load_cfs_rq, NULL);
+	unregister_trace_pelt_se(sched_load_se, NULL);
 	unregister_trace_sched_overutilized(sched_overutilized, NULL);
 }
 
