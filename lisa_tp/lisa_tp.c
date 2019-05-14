@@ -28,6 +28,42 @@ static void sched_load_cfs_rq(void *data, struct cfs_rq *cfs_rq)
 		     cpu, path, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
 }
 
+static void sched_load_rt(void *data, struct rq *rq)
+{
+	const struct sched_avg *avg = sched_trace_rq_avg_rt(rq);
+	int cpu = sched_trace_rq_cpu(rq);
+
+	if (!avg)
+		return;
+
+	trace_printk("cpu=%d load=%lu rbl_load=%lu util=%lu\n",
+		     cpu, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
+}
+
+static void sched_load_dl(void *data, struct rq *rq)
+{
+	const struct sched_avg *avg = sched_trace_rq_avg_dl(rq);
+	int cpu = sched_trace_rq_cpu(rq);
+
+	if (!avg)
+		return;
+
+	trace_printk("cpu=%d load=%lu rbl_load=%lu util=%lu\n",
+		     cpu, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
+}
+
+static void sched_load_irq(void *data, struct rq *rq)
+{
+	const struct sched_avg *avg = sched_trace_rq_avg_irq(rq);
+	int cpu = sched_trace_rq_cpu(rq);
+
+	if (!avg)
+		return;
+
+	trace_printk("cpu=%d load=%lu rbl_load=%lu util=%lu\n",
+		     cpu, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
+}
+
 static void sched_load_se(void *data, struct sched_entity *se)
 {
 	void *gcfs_rq = sched_trace_group_cfs_rq(se);
@@ -62,9 +98,9 @@ static void sched_overutilized(void *data, int overutilized, struct root_domain 
 static int lisa_tp_init(void)
 {
 	register_trace_pelt_cfs(sched_load_cfs_rq, NULL);
-	//register_trace_pelt_rt(sched_load_rt, NULL);
-	//register_trace_pelt_dl(sched_load_dl, NULL);
-	//register_trace_pelt_irq(sched_load_irq, NULL);
+	register_trace_pelt_rt(sched_load_rt, NULL);
+	register_trace_pelt_dl(sched_load_dl, NULL);
+	register_trace_pelt_irq(sched_load_irq, NULL);
 	register_trace_pelt_se(sched_load_se, NULL);
 	register_trace_sched_overutilized(sched_overutilized, NULL);
 
@@ -74,9 +110,9 @@ static int lisa_tp_init(void)
 void lisa_tp_finish(void)
 {
 	unregister_trace_pelt_cfs(sched_load_cfs_rq, NULL);
-	//unregister_trace_pelt_rt(sched_load_rt, NULL);
-	//unregister_trace_pelt_dl(sched_load_dl, NULL);
-	//unregister_trace_pelt_irq(sched_load_irq, NULL);
+	unregister_trace_pelt_rt(sched_load_rt, NULL);
+	unregister_trace_pelt_dl(sched_load_dl, NULL);
+	unregister_trace_pelt_irq(sched_load_irq, NULL);
 	unregister_trace_pelt_se(sched_load_se, NULL);
 	unregister_trace_sched_overutilized(sched_overutilized, NULL);
 }
