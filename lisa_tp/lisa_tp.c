@@ -1,9 +1,11 @@
+/* SPDX-License-Identifier: GPL-2.0 */
 #include <linux/module.h>
 
 #include <linux/sched.h>
 #include <trace/events/sched.h>
 
-#define PATH_SIZE		128
+#define CREATE_TRACE_POINTS
+#include "lisa_events.h"
 
 static inline struct cfs_rq *sched_trace_group_cfs_rq(struct sched_entity *se)
 {
@@ -24,8 +26,9 @@ static void sched_load_cfs_rq(void *data, struct cfs_rq *cfs_rq)
 	sched_trace_cfs_rq_path(cfs_rq, path, PATH_SIZE);
 	cpu = sched_trace_cfs_rq_cpu(cfs_rq);
 
-	trace_printk("cpu=%d path=%s load=%lu rbl_load=%lu util=%lu\n",
-		     cpu, path, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
+	//trace_printk("cpu=%d path=%s load=%lu rbl_load=%lu util=%lu\n",
+	//	     cpu, path, avg->load_avg, avg->runnable_load_avg, avg->util_avg);
+	trace_sched_load_cfs_rq(cpu, path, avg);
 }
 
 static void sched_load_rt(void *data, struct rq *rq)
