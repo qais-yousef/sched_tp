@@ -6,6 +6,7 @@
 #define _LISA_EVENTS_H
 
 #define PATH_SIZE		128
+#define SPAN_SIZE		128/4	/* assuming a max of 128 cpu system! */
 
 #include <linux/tracepoint.h>
 
@@ -102,6 +103,26 @@ TRACE_EVENT(sched_load_se,
 	TP_printk("cpu=%d path=%s comm=%s pid=%d load=%lu rbl_load=%lu util=%lu",
 		  __entry->cpu, __entry->path, __entry->comm, __entry->pid,
 		  __entry->load, __entry->rbl_load,__entry->util)
+);
+
+TRACE_EVENT(sched_overutilized_tp,
+
+	TP_PROTO(int overutilized, char *span),
+
+	TP_ARGS(overutilized, span),
+
+	TP_STRUCT__entry(
+		__field(	int,		overutilized		)
+		__array(	char,		span,	SPAN_SIZE	)
+	),
+
+	TP_fast_assign(
+		__entry->overutilized	= overutilized;
+		strlcpy(__entry->span, span, SPAN_SIZE);
+	),
+
+	TP_printk("overutilized=%d span=0x%s",
+		  __entry->overutilized, __entry->span)
 );
 
 #endif /* _LISA_EVENTS_H */

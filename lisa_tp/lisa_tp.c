@@ -84,11 +84,11 @@ static void sched_load_se(void *data, struct sched_entity *se)
 
 static void sched_overutilized(void *data, int overutilized, struct root_domain *rd)
 {
-	char span[PATH_SIZE];
+	char span[SPAN_SIZE];
 
 	cpumap_print_to_pagebuf(false, span, sched_trace_rd_span(rd));
 
-	trace_printk("overutilized=%d, span=%s\n", overutilized, span);
+	trace_sched_overutilized_tp(overutilized, span);
 }
 
 static int lisa_tp_init(void)
