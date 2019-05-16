@@ -1,5 +1,7 @@
 obj-m += lisa_tp.o
 
+EXTRA_CFLAGS = -I$(PWD)
+
 all:
 	make -C $(KERNEL_SRC) M=$(PWD) modules
 

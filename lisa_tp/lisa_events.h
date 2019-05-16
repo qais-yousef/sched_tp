@@ -40,6 +40,6 @@ TRACE_EVENT(sched_load_cfs_rq,
 
 /* This part must be outside protection */
 #undef TRACE_INCLUDE_PATH
-#define TRACE_INCLUDE_PATH absoulte/path/to/module
+#define TRACE_INCLUDE_PATH .
 #define TRACE_INCLUDE_FILE lisa_events
 #include <trace/define_trace.h>
