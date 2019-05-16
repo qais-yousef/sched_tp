@@ -36,6 +36,74 @@ TRACE_EVENT(sched_load_cfs_rq,
 		  __entry->rbl_load,__entry->util)
 );
 
+DECLARE_EVENT_CLASS(sched_load_rq_template,
+
+	TP_PROTO(int cpu, const struct sched_avg *avg),
+
+	TP_ARGS(cpu, avg),
+
+	TP_STRUCT__entry(
+		__field(	int,		cpu			)
+		__field(	unsigned long,	load			)
+		__field(	unsigned long,	rbl_load		)
+		__field(	unsigned long,	util			)
+	),
+
+	TP_fast_assign(
+		__entry->cpu		= cpu;
+		__entry->load		= avg->load_avg;
+		__entry->rbl_load	= avg->runnable_load_avg;
+		__entry->util		= avg->util_avg;
+	),
+
+	TP_printk("cpu=%d load=%lu rbl_load=%lu util=%lu",
+		  __entry->cpu, __entry->load,
+		  __entry->rbl_load,__entry->util)
+);
+
+DEFINE_EVENT(sched_load_rq_template, sched_load_rt,
+	TP_PROTO(int cpu, const struct sched_avg *avg),
+	TP_ARGS(cpu, avg));
+
+DEFINE_EVENT(sched_load_rq_template, sched_load_dl,
+	TP_PROTO(int cpu, const struct sched_avg *avg),
+	TP_ARGS(cpu, avg));
+
+DEFINE_EVENT(sched_load_rq_template, sched_load_irq,
+	TP_PROTO(int cpu, const struct sched_avg *avg),
+	TP_ARGS(cpu, avg));
+
+TRACE_EVENT(sched_load_se,
+
+	TP_PROTO(int cpu, char *path, char *comm, int pid, const struct sched_avg *avg),
+
+	TP_ARGS(cpu, path, comm, pid, avg),
+
+	TP_STRUCT__entry(
+		__field(	int,		cpu			)
+		__array(	char,		path,	PATH_SIZE	)
+		__array(	char,		comm,	TASK_COMM_LEN	)
+		__field(	int,		pid			)
+		__field(	unsigned long,	load			)
+		__field(	unsigned long,	rbl_load		)
+		__field(	unsigned long,	util			)
+	),
+
+	TP_fast_assign(
+		__entry->cpu		= cpu;
+		strlcpy(__entry->path, path, PATH_SIZE);
+		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		__entry->pid		= pid;
+		__entry->load		= avg->load_avg;
+		__entry->rbl_load	= avg->runnable_load_avg;
+		__entry->util		= avg->util_avg;
+	),
+
+	TP_printk("cpu=%d path=%s comm=%s pid=%d load=%lu rbl_load=%lu util=%lu",
+		  __entry->cpu, __entry->path, __entry->comm, __entry->pid,
+		  __entry->load, __entry->rbl_load,__entry->util)
+);
+
 #endif /* _LISA_EVENTS_H */
 
 /* This part must be outside protection */
