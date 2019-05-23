@@ -10,7 +10,7 @@
 
 #include <linux/tracepoint.h>
 
-TRACE_EVENT(sched_load_cfs_rq,
+TRACE_EVENT(sched_pelt_cfs,
 
 	TP_PROTO(int cpu, char *path, const struct sched_avg *avg),
 
@@ -37,7 +37,7 @@ TRACE_EVENT(sched_load_cfs_rq,
 		  __entry->rbl_load,__entry->util)
 );
 
-DECLARE_EVENT_CLASS(sched_load_rq_template,
+DECLARE_EVENT_CLASS(sched_pelt_rq_template,
 
 	TP_PROTO(int cpu, const struct sched_avg *avg),
 
@@ -62,19 +62,19 @@ DECLARE_EVENT_CLASS(sched_load_rq_template,
 		  __entry->rbl_load,__entry->util)
 );
 
-DEFINE_EVENT(sched_load_rq_template, sched_load_rt,
+DEFINE_EVENT(sched_pelt_rq_template, sched_pelt_rt,
 	TP_PROTO(int cpu, const struct sched_avg *avg),
 	TP_ARGS(cpu, avg));
 
-DEFINE_EVENT(sched_load_rq_template, sched_load_dl,
+DEFINE_EVENT(sched_pelt_rq_template, sched_pelt_dl,
 	TP_PROTO(int cpu, const struct sched_avg *avg),
 	TP_ARGS(cpu, avg));
 
-DEFINE_EVENT(sched_load_rq_template, sched_load_irq,
+DEFINE_EVENT(sched_pelt_rq_template, sched_pelt_irq,
 	TP_PROTO(int cpu, const struct sched_avg *avg),
 	TP_ARGS(cpu, avg));
 
-TRACE_EVENT(sched_load_se,
+TRACE_EVENT(sched_pelt_se,
 
 	TP_PROTO(int cpu, char *path, char *comm, int pid, const struct sched_avg *avg),
 
