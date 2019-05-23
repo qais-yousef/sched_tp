@@ -5,7 +5,7 @@
 #include <trace/events/sched.h>
 
 #define CREATE_TRACE_POINTS
-#include "lisa_events.h"
+#include "sched_events.h"
 
 static inline struct cfs_rq *sched_trace_group_cfs_rq(struct sched_entity *se)
 {

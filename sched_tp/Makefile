@@ -1,4 +1,4 @@
-obj-m += lisa_tp.o
+obj-m += sched_tp.o
 
 EXTRA_CFLAGS = -I$(PWD)
 

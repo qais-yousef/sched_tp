@@ -2,8 +2,8 @@
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM sched
 
-#if !defined(_LISA_EVENTS_H) || defined(TRACE_HEADER_MULTI_READ)
-#define _LISA_EVENTS_H
+#if !defined(_SCHED_EVENTS_H) || defined(TRACE_HEADER_MULTI_READ)
+#define _SCHED_EVENTS_H
 
 #define PATH_SIZE		128
 #define SPAN_SIZE		128/4	/* assuming a max of 128 cpu system! */
@@ -125,10 +125,10 @@ TRACE_EVENT(sched_overutilized,
 		  __entry->overutilized, __entry->span)
 );
 
-#endif /* _LISA_EVENTS_H */
+#endif /* _SCHED_EVENTS_H */
 
 /* This part must be outside protection */
 #undef TRACE_INCLUDE_PATH
 #define TRACE_INCLUDE_PATH .
-#define TRACE_INCLUDE_FILE lisa_events
+#define TRACE_INCLUDE_FILE sched_events
 #include <trace/define_trace.h>
