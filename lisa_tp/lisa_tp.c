@@ -88,29 +88,29 @@ static void sched_overutilized(void *data, int overutilized, struct root_domain 
 
 	cpumap_print_to_pagebuf(false, span, sched_trace_rd_span(rd));
 
-	trace_sched_overutilized_tp(overutilized, span);
+	trace_sched_overutilized(overutilized, span);
 }
 
 static int lisa_tp_init(void)
 {
-	register_trace_pelt_cfs(sched_load_cfs_rq, NULL);
-	register_trace_pelt_rt(sched_load_rt, NULL);
-	register_trace_pelt_dl(sched_load_dl, NULL);
-	register_trace_pelt_irq(sched_load_irq, NULL);
-	register_trace_pelt_se(sched_load_se, NULL);
-	register_trace_sched_overutilized(sched_overutilized, NULL);
+	register_trace_pelt_cfs_tp(sched_load_cfs_rq, NULL);
+	register_trace_pelt_rt_tp(sched_load_rt, NULL);
+	register_trace_pelt_dl_tp(sched_load_dl, NULL);
+	register_trace_pelt_irq_tp(sched_load_irq, NULL);
+	register_trace_pelt_se_tp(sched_load_se, NULL);
+	register_trace_sched_overutilized_tp(sched_overutilized, NULL);
 
 	return 0;
 }
 
 void lisa_tp_finish(void)
 {
-	unregister_trace_pelt_cfs(sched_load_cfs_rq, NULL);
-	unregister_trace_pelt_rt(sched_load_rt, NULL);
-	unregister_trace_pelt_dl(sched_load_dl, NULL);
-	unregister_trace_pelt_irq(sched_load_irq, NULL);
-	unregister_trace_pelt_se(sched_load_se, NULL);
-	unregister_trace_sched_overutilized(sched_overutilized, NULL);
+	unregister_trace_pelt_cfs_tp(sched_load_cfs_rq, NULL);
+	unregister_trace_pelt_rt_tp(sched_load_rt, NULL);
+	unregister_trace_pelt_dl_tp(sched_load_dl, NULL);
+	unregister_trace_pelt_irq_tp(sched_load_irq, NULL);
+	unregister_trace_pelt_se_tp(sched_load_se, NULL);
+	unregister_trace_sched_overutilized_tp(sched_overutilized, NULL);
 }
 
 

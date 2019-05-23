@@ -105,7 +105,7 @@ TRACE_EVENT(sched_load_se,
 		  __entry->load, __entry->rbl_load,__entry->util)
 );
 
-TRACE_EVENT(sched_overutilized_tp,
+TRACE_EVENT(sched_overutilized,
 
 	TP_PROTO(int overutilized, char *span),
 
