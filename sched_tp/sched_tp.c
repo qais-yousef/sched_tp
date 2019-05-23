@@ -7,7 +7,7 @@
 #define CREATE_TRACE_POINTS
 #include "sched_events.h"
 
-static inline struct cfs_rq *sched_trace_group_cfs_rq(struct sched_entity *se)
+static inline struct cfs_rq *get_group_cfs_rq(struct sched_entity *se)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
        return se->my_q;
@@ -64,7 +64,7 @@ static void sched_load_irq(void *data, struct rq *rq)
 
 static void sched_load_se(void *data, struct sched_entity *se)
 {
-	void *gcfs_rq = sched_trace_group_cfs_rq(se);
+	void *gcfs_rq = get_group_cfs_rq(se);
 	void *cfs_rq = se->cfs_rq;
 	struct task_struct *p;
 	char path[PATH_SIZE];
