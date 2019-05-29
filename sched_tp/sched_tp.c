@@ -18,77 +18,89 @@ static inline struct cfs_rq *get_group_cfs_rq(struct sched_entity *se)
 
 static void sched_pelt_cfs(void *data, struct cfs_rq *cfs_rq)
 {
-	const struct sched_avg *avg;
-	char path[PATH_SIZE];
-	int cpu;
+	if (trace_sched_pelt_cfs_enabled()) {
+		const struct sched_avg *avg;
+		char path[PATH_SIZE];
+		int cpu;
 
-	avg = sched_trace_cfs_rq_avg(cfs_rq);
-	sched_trace_cfs_rq_path(cfs_rq, path, PATH_SIZE);
-	cpu = sched_trace_cfs_rq_cpu(cfs_rq);
+		avg = sched_trace_cfs_rq_avg(cfs_rq);
+		sched_trace_cfs_rq_path(cfs_rq, path, PATH_SIZE);
+		cpu = sched_trace_cfs_rq_cpu(cfs_rq);
 
-	trace_sched_pelt_cfs(cpu, path, avg);
+		trace_sched_pelt_cfs(cpu, path, avg);
+	}
 }
 
 static void sched_pelt_rt(void *data, struct rq *rq)
 {
-	const struct sched_avg *avg = sched_trace_rq_avg_rt(rq);
-	int cpu = sched_trace_rq_cpu(rq);
+	if (trace_sched_pelt_rt_enabled()) {
+		const struct sched_avg *avg = sched_trace_rq_avg_rt(rq);
+		int cpu = sched_trace_rq_cpu(rq);
 
-	if (!avg)
-		return;
+		if (!avg)
+			return;
 
-	trace_sched_pelt_rt(cpu, avg);
+		trace_sched_pelt_rt(cpu, avg);
+	}
 }
 
 static void sched_pelt_dl(void *data, struct rq *rq)
 {
-	const struct sched_avg *avg = sched_trace_rq_avg_dl(rq);
-	int cpu = sched_trace_rq_cpu(rq);
+	if (trace_sched_pelt_dl_enabled()) {
+		const struct sched_avg *avg = sched_trace_rq_avg_dl(rq);
+		int cpu = sched_trace_rq_cpu(rq);
 
-	if (!avg)
-		return;
+		if (!avg)
+			return;
 
-	trace_sched_pelt_dl(cpu, avg);
+		trace_sched_pelt_dl(cpu, avg);
+	}
 }
 
 static void sched_pelt_irq(void *data, struct rq *rq)
 {
-	const struct sched_avg *avg = sched_trace_rq_avg_irq(rq);
-	int cpu = sched_trace_rq_cpu(rq);
+	if (trace_sched_pelt_irq_enabled()){
+		const struct sched_avg *avg = sched_trace_rq_avg_irq(rq);
+		int cpu = sched_trace_rq_cpu(rq);
 
-	if (!avg)
-		return;
+		if (!avg)
+			return;
 
-	trace_sched_pelt_irq(cpu, avg);
+		trace_sched_pelt_irq(cpu, avg);
+	}
 }
 
 static void sched_pelt_se(void *data, struct sched_entity *se)
 {
-	void *gcfs_rq = get_group_cfs_rq(se);
-	void *cfs_rq = se->cfs_rq;
-	struct task_struct *p;
-	char path[PATH_SIZE];
-	char *comm;
-	pid_t pid;
-	int cpu;
+	if (trace_sched_pelt_se_enabled()) {
+		void *gcfs_rq = get_group_cfs_rq(se);
+		void *cfs_rq = se->cfs_rq;
+		struct task_struct *p;
+		char path[PATH_SIZE];
+		char *comm;
+		pid_t pid;
+		int cpu;
 
-	sched_trace_cfs_rq_path(gcfs_rq, path, PATH_SIZE);
-	cpu = sched_trace_cfs_rq_cpu(cfs_rq);
+		sched_trace_cfs_rq_path(gcfs_rq, path, PATH_SIZE);
+		cpu = sched_trace_cfs_rq_cpu(cfs_rq);
 
-	p = gcfs_rq ? NULL : container_of(se, struct task_struct, se);
-	comm = p ? p->comm : "(null)";
-	pid = p ? p->pid : -1;
+		p = gcfs_rq ? NULL : container_of(se, struct task_struct, se);
+		comm = p ? p->comm : "(null)";
+		pid = p ? p->pid : -1;
 
-	trace_sched_pelt_se(cpu, path, comm, pid, &se->avg);
+		trace_sched_pelt_se(cpu, path, comm, pid, &se->avg);
+	}
 }
 
 static void sched_overutilized(void *data, int overutilized, struct root_domain *rd)
 {
-	char span[SPAN_SIZE];
+	if (trace_sched_overutilized_enabled()) {
+		char span[SPAN_SIZE];
 
-	cpumap_print_to_pagebuf(false, span, sched_trace_rd_span(rd));
+		cpumap_print_to_pagebuf(false, span, sched_trace_rd_span(rd));
 
-	trace_sched_overutilized(overutilized, span);
+		trace_sched_overutilized(overutilized, span);
+	}
 }
 
 static int sched_tp_init(void)
