@@ -92,7 +92,7 @@ static void sched_pelt_se(void *data, struct sched_entity *se)
 	}
 }
 
-static void sched_overutilized(void *data, int overutilized, struct root_domain *rd)
+static void sched_overutilized(void *data, struct root_domain *rd, bool overutilized)
 {
 	if (trace_sched_overutilized_enabled()) {
 		char span[SPAN_SIZE];
