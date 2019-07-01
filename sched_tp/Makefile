@@ -1,6 +1,6 @@
 obj-m += sched_tp.o
 
-EXTRA_CFLAGS = -I$(PWD)
+EXTRA_CFLAGS = -I$(src)
 
 all:
 	make -C $(KERNEL_SRC) M=$(PWD) modules
