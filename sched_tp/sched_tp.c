@@ -10,9 +10,9 @@
 static inline struct cfs_rq *get_group_cfs_rq(struct sched_entity *se)
 {
 #ifdef CONFIG_FAIR_GROUP_SCHED
-       return se->my_q;
+	return se->my_q;
 #else
-       return NULL;
+	return NULL;
 #endif
 }
 
