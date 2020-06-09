@@ -8,6 +8,7 @@
 #define PATH_SIZE		128
 #define SPAN_SIZE		128/4	/* assuming a max of 128 cpu system! */
 
+#include <linux/version.h>
 #include <linux/tracepoint.h>
 
 TRACE_EVENT(sched_pelt_cfs,
@@ -28,7 +29,11 @@ TRACE_EVENT(sched_pelt_cfs,
 		__entry->cpu		= cpu;
 		strlcpy(__entry->path, path, PATH_SIZE);
 		__entry->load		= avg->load_avg;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
 		__entry->rbl_load	= avg->runnable_load_avg;
+#else
+		__entry->rbl_load	= avg->runnable_avg;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
@@ -53,7 +58,11 @@ DECLARE_EVENT_CLASS(sched_pelt_rq_template,
 	TP_fast_assign(
 		__entry->cpu		= cpu;
 		__entry->load		= avg->load_avg;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
 		__entry->rbl_load	= avg->runnable_load_avg;
+#else
+		__entry->rbl_load	= avg->runnable_avg;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
@@ -96,7 +105,11 @@ TRACE_EVENT(sched_pelt_se,
 		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
 		__entry->load		= avg->load_avg;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
 		__entry->rbl_load	= avg->runnable_load_avg;
+#else
+		__entry->rbl_load	= avg->runnable_avg;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
