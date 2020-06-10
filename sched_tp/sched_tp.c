@@ -112,6 +112,13 @@ static void sched_overutilized(void *data, struct root_domain *rd, bool overutil
 	}
 }
 
+static void sched_nr_running(void *data, int cpu, int change, unsigned int nr_running)
+{
+          if (trace_sched_nr_running_enabled()) {
+	          trace_sched_nr_running(cpu, change, nr_running);
+	  }
+}
+
 static int sched_tp_init(void)
 {
 	register_trace_pelt_cfs_tp(sched_pelt_cfs, NULL);
@@ -120,6 +127,7 @@ static int sched_tp_init(void)
 	register_trace_pelt_irq_tp(sched_pelt_irq, NULL);
 	register_trace_pelt_se_tp(sched_pelt_se, NULL);
 	register_trace_sched_overutilized_tp(sched_overutilized, NULL);
+	register_trace_sched_update_nr_running_tp(sched_nr_running, NULL);
 
 	return 0;
 }
@@ -132,6 +140,7 @@ static void sched_tp_finish(void)
 	unregister_trace_pelt_irq_tp(sched_pelt_irq, NULL);
 	unregister_trace_pelt_se_tp(sched_pelt_se, NULL);
 	unregister_trace_sched_overutilized_tp(sched_overutilized, NULL);
+	unregister_trace_sched_update_nr_running_tp(sched_nr_running, NULL);
 }
 
 
