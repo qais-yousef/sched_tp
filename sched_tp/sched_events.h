@@ -138,7 +138,7 @@ TRACE_EVENT(sched_overutilized,
 		  __entry->overutilized, __entry->span)
 );
 
-TRACE_EVENT(sched_nr_running,
+TRACE_EVENT(sched_update_nr_running,
 
 	    TP_PROTO(int cpu, int change, unsigned int nr_running),
 
