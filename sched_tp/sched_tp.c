@@ -112,9 +112,12 @@ static void sched_overutilized(void *data, struct root_domain *rd, bool overutil
 	}
 }
 
-static void sched_update_nr_running(void *data, int cpu, int change, unsigned int nr_running)
+static void sched_update_nr_running(void *data, struct rq *rq, int change)
 {
           if (trace_sched_update_nr_running_enabled()) {
+		  int cpu = sched_trace_rq_cpu(rq);
+		  int nr_running = sched_trace_rq_nr_running(rq);
+
 	          trace_sched_update_nr_running(cpu, change, nr_running);
 	  }
 }
