@@ -5,11 +5,40 @@
 /* Required for struct irq_work which is defined in struct root_domain */
 #include <linux/irq_work.h>
 
+#include <linux/cgroup.h>
+
 #include "vmlinux_deps.h"
 #include "vmlinux.h"
 
 #define cpu_of(rq)	rq->cpu
 #define rq_of(cfs_rq)	cfs_rq->rq
+
+
+static inline bool task_group_is_autogroup(struct task_group *tg)
+{
+	return !!tg->autogroup;
+}
+
+int autogroup_path(struct task_group *tg, char *buf, int buflen)
+{
+	if (!task_group_is_autogroup(tg))
+		return 0;
+
+	return snprintf(buf, buflen, "%s-%ld", "/autogroup", tg->autogroup->id);
+}
+
+static inline void cfs_rq_tg_path(struct cfs_rq *cfs_rq, char *path, int len)
+{
+	if (!path)
+		return;
+
+	if (cfs_rq && task_group_is_autogroup(cfs_rq->tg))
+		autogroup_path(cfs_rq->tg, path, len);
+	else if (cfs_rq && cfs_rq->tg->css.cgroup)
+		cgroup_path(cfs_rq->tg->css.cgroup, path, len);
+	else
+		strlcpy(path, "(null)", len);
+}
 
 static inline const struct sched_avg *sched_tp_cfs_rq_avg(struct cfs_rq *cfs_rq)
 {

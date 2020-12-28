@@ -2,3 +2,6 @@ cpupri
 cfs_rq
 rq
 root_domain
+task_group
+cfs_bandwidth
+autogroup
