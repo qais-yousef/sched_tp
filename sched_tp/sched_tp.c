@@ -33,9 +33,9 @@ static inline void _trace_cfs(struct cfs_rq *cfs_rq,
 	char path[PATH_SIZE];
 	int cpu;
 
-	avg = sched_trace_cfs_rq_avg(cfs_rq);
-	sched_trace_cfs_rq_path(cfs_rq, path, PATH_SIZE);
-	cpu = sched_trace_cfs_rq_cpu(cfs_rq);
+	avg = sched_tp_cfs_rq_avg(cfs_rq);
+	sched_tp_cfs_rq_path(cfs_rq, path, PATH_SIZE);
+	cpu = sched_tp_cfs_rq_cpu(cfs_rq);
 
 	trace_event(cpu, path, avg);
  }
@@ -52,8 +52,8 @@ static inline void _trace_se(struct sched_entity *se,
 	pid_t pid;
 	int cpu;
 
-	sched_trace_cfs_rq_path(gcfs_rq, path, PATH_SIZE);
-	cpu = sched_trace_cfs_rq_cpu(cfs_rq);
+	sched_tp_cfs_rq_path(gcfs_rq, path, PATH_SIZE);
+	cpu = sched_tp_cfs_rq_cpu(cfs_rq);
 
 	p = gcfs_rq ? NULL : container_of(se, struct task_struct, se);
 	comm = p ? p->comm : "(null)";
@@ -71,8 +71,8 @@ static void sched_pelt_cfs(void *data, struct cfs_rq *cfs_rq)
 static void sched_pelt_rt(void *data, struct rq *rq)
 {
 	if (trace_sched_pelt_rt_enabled()) {
-		const struct sched_avg *avg = sched_trace_rq_avg_rt(rq);
-		int cpu = sched_trace_rq_cpu(rq);
+		const struct sched_avg *avg = sched_tp_rq_avg_rt(rq);
+		int cpu = sched_tp_rq_cpu(rq);
 
 		if (!avg)
 			return;
@@ -84,8 +84,8 @@ static void sched_pelt_rt(void *data, struct rq *rq)
 static void sched_pelt_dl(void *data, struct rq *rq)
 {
 	if (trace_sched_pelt_dl_enabled()) {
-		const struct sched_avg *avg = sched_trace_rq_avg_dl(rq);
-		int cpu = sched_trace_rq_cpu(rq);
+		const struct sched_avg *avg = sched_tp_rq_avg_dl(rq);
+		int cpu = sched_tp_rq_cpu(rq);
 
 		if (!avg)
 			return;
@@ -97,8 +97,8 @@ static void sched_pelt_dl(void *data, struct rq *rq)
 static void sched_pelt_irq(void *data, struct rq *rq)
 {
 	if (trace_sched_pelt_irq_enabled()){
-		const struct sched_avg *avg = sched_trace_rq_avg_irq(rq);
-		int cpu = sched_trace_rq_cpu(rq);
+		const struct sched_avg *avg = sched_tp_rq_avg_irq(rq);
+		int cpu = sched_tp_rq_cpu(rq);
 
 		if (!avg)
 			return;
@@ -118,7 +118,7 @@ static void sched_overutilized(void *data, struct root_domain *rd, bool overutil
 	if (trace_sched_overutilized_enabled()) {
 		char span[SPAN_SIZE];
 
-		cpumap_print_to_pagebuf(false, span, sched_trace_rd_span(rd));
+		cpumap_print_to_pagebuf(false, span, sched_tp_rd_span(rd));
 
 		trace_sched_overutilized(overutilized, span);
 	}
@@ -127,8 +127,8 @@ static void sched_overutilized(void *data, struct root_domain *rd, bool overutil
 static void sched_update_nr_running(void *data, struct rq *rq, int change)
 {
 	if (trace_sched_update_nr_running_enabled()) {
-		  int cpu = sched_trace_rq_cpu(rq);
-		  int nr_running = sched_trace_rq_nr_running(rq);
+		  int cpu = sched_tp_rq_cpu(rq);
+		  int nr_running = sched_tp_rq_nr_running(rq);
 
 		trace_sched_update_nr_running(cpu, change, nr_running);
 	}
