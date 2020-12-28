@@ -1,0 +1,10 @@
+uclamp_rq
+rt_rq
+dl_rq
+cpu_stop_work
+uclamp_bucket
+rt_prio_array
+cpu_stop_fn_t
+dl_bw
+cpudl
+cpupri_vec
