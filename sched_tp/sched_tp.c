@@ -66,6 +66,12 @@ static void sched_pelt_cfs(void *data, struct cfs_rq *cfs_rq)
 {
 	if (trace_sched_pelt_cfs_enabled())
 		_trace_cfs(cfs_rq, trace_sched_pelt_cfs);
+
+	if (trace_uclamp_util_cfs_enabled()) {
+		bool __maybe_unused is_root_rq = (&rq_of(cfs_rq)->cfs == cfs_rq);
+
+		trace_uclamp_util_cfs(is_root_rq, rq_of(cfs_rq), cfs_rq);
+	}
 }
 
 static void sched_pelt_rt(void *data, struct rq *rq)
@@ -111,6 +117,14 @@ static void sched_pelt_se(void *data, struct sched_entity *se)
 {
 	if (trace_sched_pelt_se_enabled())
 		_trace_se(se, trace_sched_pelt_se);
+
+	if (trace_uclamp_util_se_enabled()) {
+		struct cfs_rq __maybe_unused *cfs_rq = get_se_cfs_rq(se);
+
+		trace_uclamp_util_se(entity_is_task(se),
+				     container_of(se, struct task_struct, se),
+				     rq_of(cfs_rq));
+	}
 }
 
 static void sched_overutilized(void *data, struct root_domain *rd, bool overutilized)
