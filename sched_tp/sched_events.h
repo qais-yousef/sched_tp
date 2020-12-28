@@ -2,11 +2,14 @@
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM sched
 
+#define MAX_SPAN_SIZE		128
+
 #if !defined(_SCHED_EVENTS_H) || defined(TRACE_HEADER_MULTI_READ)
 #define _SCHED_EVENTS_H
 
-#define PATH_SIZE		128
-#define SPAN_SIZE		128/4	/* assuming a max of 128 cpu system! */
+#define PATH_SIZE		64
+#define __SPAN_SIZE		(round_up(NR_CPUS, 4)/4)
+#define SPAN_SIZE		(__SPAN_SIZE > MAX_SPAN_SIZE ? MAX_SPAN_SIZE : __SPAN_SIZE)
 
 #include <linux/version.h>
 #include <linux/tracepoint.h>
