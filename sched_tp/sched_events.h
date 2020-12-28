@@ -163,6 +163,65 @@ TRACE_EVENT(sched_update_nr_running,
 	    TP_printk("cpu=%d change=%d nr_running=%d", __entry->cpu, __entry->change, __entry->nr_running)
 	    );
 
+TRACE_EVENT(sched_util_est_se,
+
+	TP_PROTO(int cpu, char *path, char *comm, int pid,
+		 const struct sched_avg *avg),
+
+	TP_ARGS(cpu, path, comm, pid, avg),
+
+	TP_STRUCT__entry(
+		__field(	int,		cpu			)
+		__array(	char,		path,	PATH_SIZE	)
+		__array(	char,		comm,	TASK_COMM_LEN	)
+		__field(	int,		pid			)
+		__field( 	unsigned int,	enqueued		)
+		__field( 	unsigned int,	ewma			)
+		__field(	unsigned long,	util			)
+	),
+
+	TP_fast_assign(
+		__entry->cpu		= cpu;
+		strlcpy(__entry->path, path, PATH_SIZE);
+		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		__entry->pid		= pid;
+		__entry->enqueued	= avg->util_est.enqueued;
+		__entry->ewma		= avg->util_est.ewma;
+		__entry->util		= avg->util_avg;
+	),
+
+	TP_printk("cpu=%d path=%s comm=%s pid=%d enqueued=%u ewma=%u util=%lu",
+		  __entry->cpu, __entry->path, __entry->comm, __entry->pid,
+		  __entry->enqueued, __entry->ewma, __entry->util)
+);
+
+TRACE_EVENT(sched_util_est_cfs,
+
+	TP_PROTO(int cpu, char *path, const struct sched_avg *avg),
+
+	TP_ARGS(cpu, path, avg),
+
+	TP_STRUCT__entry(
+		__field(	int,		cpu			)
+		__array(	char,		path,	PATH_SIZE	)
+		__field( 	unsigned int,	enqueued		)
+		__field( 	unsigned int,	ewma			)
+		__field(	unsigned long,	util			)
+	),
+
+	TP_fast_assign(
+		__entry->cpu		= cpu;
+		strlcpy(__entry->path, path, PATH_SIZE);
+		__entry->enqueued	= avg->util_est.enqueued;
+		__entry->ewma		= avg->util_est.ewma;
+		__entry->util		= avg->util_avg;
+	),
+
+	TP_printk("cpu=%d path=%s enqueued=%u ewma=%u util=%lu",
+		  __entry->cpu, __entry->path, __entry->enqueued,
+		 __entry->ewma, __entry->util)
+);
+
 #endif /* _SCHED_EVENTS_H */
 
 /* This part must be outside protection */
