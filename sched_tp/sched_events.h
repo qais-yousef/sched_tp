@@ -13,6 +13,17 @@
 
 #include <linux/version.h>
 #include <linux/tracepoint.h>
+#include <linux/version.h>
+
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(5,6,0)
+#define RBL_LOAD_ENTRY		rbl_load
+#define RBL_LOAD_MEMBER		runnable_load_avg
+#define RBL_LOAD_STR		"rbl_load"
+#else
+#define RBL_LOAD_ENTRY		runnable
+#define RBL_LOAD_MEMBER		runnable_avg
+#define RBL_LOAD_STR		"runnable"
+#endif
 
 TRACE_EVENT(sched_pelt_cfs,
 
@@ -24,7 +35,7 @@ TRACE_EVENT(sched_pelt_cfs,
 		__field(	int,		cpu			)
 		__array(	char,		path,	PATH_SIZE	)
 		__field(	unsigned long,	load			)
-		__field(	unsigned long,	rbl_load		)
+		__field(	unsigned long,	RBL_LOAD_ENTRY		)
 		__field(	unsigned long,	util			)
 	),
 
@@ -32,17 +43,13 @@ TRACE_EVENT(sched_pelt_cfs,
 		__entry->cpu		= cpu;
 		strlcpy(__entry->path, path, PATH_SIZE);
 		__entry->load		= avg->load_avg;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
-		__entry->rbl_load	= avg->runnable_load_avg;
-#else
-		__entry->rbl_load	= avg->runnable_avg;
-#endif
+		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
 		__entry->util		= avg->util_avg;
 	),
 
-	TP_printk("cpu=%d path=%s load=%lu rbl_load=%lu util=%lu",
+	TP_printk("cpu=%d path=%s load=%lu " RBL_LOAD_STR "=%lu util=%lu",
 		  __entry->cpu, __entry->path, __entry->load,
-		  __entry->rbl_load,__entry->util)
+		  __entry->RBL_LOAD_ENTRY,__entry->util)
 );
 
 DECLARE_EVENT_CLASS(sched_pelt_rq_template,
@@ -54,24 +61,20 @@ DECLARE_EVENT_CLASS(sched_pelt_rq_template,
 	TP_STRUCT__entry(
 		__field(	int,		cpu			)
 		__field(	unsigned long,	load			)
-		__field(	unsigned long,	rbl_load		)
+		__field(	unsigned long,	RBL_LOAD_ENTRY		)
 		__field(	unsigned long,	util			)
 	),
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
 		__entry->load		= avg->load_avg;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
-		__entry->rbl_load	= avg->runnable_load_avg;
-#else
-		__entry->rbl_load	= avg->runnable_avg;
-#endif
+		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
 		__entry->util		= avg->util_avg;
 	),
 
-	TP_printk("cpu=%d load=%lu rbl_load=%lu util=%lu",
+	TP_printk("cpu=%d load=%lu " RBL_LOAD_STR "=%lu util=%lu",
 		  __entry->cpu, __entry->load,
-		  __entry->rbl_load,__entry->util)
+		  __entry->RBL_LOAD_ENTRY,__entry->util)
 );
 
 DEFINE_EVENT(sched_pelt_rq_template, sched_pelt_rt,
@@ -98,8 +101,9 @@ TRACE_EVENT(sched_pelt_se,
 		__array(	char,		comm,	TASK_COMM_LEN	)
 		__field(	int,		pid			)
 		__field(	unsigned long,	load			)
-		__field(	unsigned long,	rbl_load		)
+		__field(	unsigned long,	RBL_LOAD_ENTRY		)
 		__field(	unsigned long,	util			)
+		__field(	unsigned long long, update_time	        )
 	),
 
 	TP_fast_assign(
@@ -108,17 +112,14 @@ TRACE_EVENT(sched_pelt_se,
 		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
 		__entry->load		= avg->load_avg;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(5,7,0)
-		__entry->rbl_load	= avg->runnable_load_avg;
-#else
-		__entry->rbl_load	= avg->runnable_avg;
-#endif
+		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
 		__entry->util		= avg->util_avg;
+		__entry->update_time    = avg->last_update_time;
 	),
 
-	TP_printk("cpu=%d path=%s comm=%s pid=%d load=%lu rbl_load=%lu util=%lu",
+	TP_printk("cpu=%d path=%s comm=%s pid=%d load=%lu " RBL_LOAD_STR "=%lu util=%lu update_time=%llu",
 		  __entry->cpu, __entry->path, __entry->comm, __entry->pid,
-		  __entry->load, __entry->rbl_load,__entry->util)
+		  __entry->load, __entry->RBL_LOAD_ENTRY,__entry->util, __entry->update_time)
 );
 
 TRACE_EVENT(sched_overutilized,
