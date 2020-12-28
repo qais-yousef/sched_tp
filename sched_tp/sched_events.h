@@ -15,6 +15,8 @@
 #include <linux/tracepoint.h>
 #include <linux/version.h>
 
+#include "sched_tp_helpers.h"
+
 #if LINUX_VERSION_CODE <= KERNEL_VERSION(5,6,0)
 #define RBL_LOAD_ENTRY		rbl_load
 #define RBL_LOAD_MEMBER		runnable_load_avg
