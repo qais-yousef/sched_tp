@@ -10,9 +10,27 @@
 #include "vmlinux_deps.h"
 #include "vmlinux.h"
 
-#define cpu_of(rq)	rq->cpu
-#define rq_of(cfs_rq)	cfs_rq->rq
 
+#ifdef CONFIG_FAIR_GROUP_SCHED
+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+{
+	return cfs_rq->rq;
+}
+#else
+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
+{
+	return container_of(cfs_rq, struct rq, cfs);
+}
+#endif
+
+static inline int cpu_of(struct rq *rq)
+{
+#ifdef CONFIG_SMP
+	return rq->cpu;
+#else
+	return 0;
+#endif
+}
 
 static inline bool task_group_is_autogroup(struct task_group *tg)
 {
