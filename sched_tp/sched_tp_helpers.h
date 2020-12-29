@@ -16,11 +16,13 @@ static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
 {
 	return cfs_rq->rq;
 }
+#define entity_is_task(se)	(!se->my_q)
 #else
 static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
 {
 	return container_of(cfs_rq, struct rq, cfs);
 }
+#define entity_is_task(se)	1
 #endif
 
 static inline int cpu_of(struct rq *rq)
@@ -56,6 +58,23 @@ static inline void cfs_rq_tg_path(struct cfs_rq *cfs_rq, char *path, int len)
 		cgroup_path(cfs_rq->tg->css.cgroup, path, len);
 	else
 		strlcpy(path, "(null)", len);
+}
+
+/* A cut down version of the original. @p MUST be NULL */
+static __always_inline
+unsigned long uclamp_rq_util_with(struct rq *rq, unsigned long util,
+				  struct task_struct *p)
+{
+	unsigned long min_util;
+	unsigned long max_util;
+
+	min_util = READ_ONCE(rq->uclamp[UCLAMP_MIN].value);
+	max_util = READ_ONCE(rq->uclamp[UCLAMP_MAX].value);
+
+	if (unlikely(min_util >= max_util))
+		return min_util;
+
+	return clamp(util, min_util, max_util);
 }
 
 static inline const struct sched_avg *sched_tp_cfs_rq_avg(struct cfs_rq *cfs_rq)
