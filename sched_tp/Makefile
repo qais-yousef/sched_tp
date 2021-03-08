@@ -22,7 +22,12 @@ clean:
 	rm -f $(VMLINUX_H) $(VMLINUX_DEPS_H)
 
 $(VMLINUX_DEPS_H): $(VMLINUX_DEPS_TXT) $(VMLINUX)
-	pahole -C file://vmlinux_deps.txt $(VMLINUX) > $@
+	@rm -f $@
+ifeq ($(shell pahole --version), v1.15)
+	@echo "pahole version v1.15: applying workaround..."
+	@echo "typedef int (*cpu_stop_fn_t)(void *arg);" > $@;
+endif
+	pahole -C file://vmlinux_deps.txt $(VMLINUX) >> $@
 
 $(VMLINUX_H): $(VMLINUX_DEPS_H) $(VMLINUX_TXT) $(VMLINUX)
 	pahole -C file://vmlinux.txt $(VMLINUX) > $@
