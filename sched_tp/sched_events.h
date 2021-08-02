@@ -318,7 +318,7 @@ TRACE_EVENT(sched_cpu_capacity,
 		__field(	unsigned long,	capacity_curr	)
 	),
 
-	unsigned long scale_cpu = arch_scale_cpu_capacity(rq->cpu);
+	unsigned long scale_cpu = rq->cpu_capacity_orig;
 	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
 
 	TP_fast_assign(
