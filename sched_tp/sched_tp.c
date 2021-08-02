@@ -113,6 +113,19 @@ static void sched_pelt_irq(void *data, struct rq *rq)
 	}
 }
 
+static void sched_pelt_thermal(void *data, struct rq *rq)
+{
+	if (trace_sched_pelt_thermal_enabled()){
+		const struct sched_avg *avg = sched_tp_rq_avg_thermal(rq);
+		int cpu = sched_tp_rq_cpu(rq);
+
+		if (!avg)
+			return;
+
+		trace_sched_pelt_thermal(cpu, avg);
+	}
+}
+
 static void sched_pelt_se(void *data, struct sched_entity *se)
 {
 	if (trace_sched_pelt_se_enabled())
@@ -173,6 +186,7 @@ static int sched_tp_init(void)
 	register_trace_pelt_dl_tp(sched_pelt_dl, NULL);
 	register_trace_pelt_irq_tp(sched_pelt_irq, NULL);
 	register_trace_pelt_se_tp(sched_pelt_se, NULL);
+	register_trace_pelt_thermal_tp(sched_pelt_thermal, NULL);
 	register_trace_sched_overutilized_tp(sched_overutilized, NULL);
 	register_trace_sched_update_nr_running_tp(sched_update_nr_running, NULL);
 	register_trace_sched_util_est_cfs_tp(sched_util_est_cfs, NULL);
@@ -189,6 +203,7 @@ static void sched_tp_finish(void)
 	unregister_trace_pelt_dl_tp(sched_pelt_dl, NULL);
 	unregister_trace_pelt_irq_tp(sched_pelt_irq, NULL);
 	unregister_trace_pelt_se_tp(sched_pelt_se, NULL);
+	unregister_trace_pelt_thermal_tp(sched_pelt_thermal, NULL);
 	unregister_trace_sched_overutilized_tp(sched_overutilized, NULL);
 	unregister_trace_sched_update_nr_running_tp(sched_update_nr_running, NULL);
 	unregister_trace_sched_util_est_cfs_tp(sched_util_est_cfs, NULL);
