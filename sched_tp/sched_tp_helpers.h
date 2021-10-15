@@ -7,6 +7,7 @@
 
 #include <linux/cgroup.h>
 
+#include "vmlinux_deps_uclamp.h"
 #include "vmlinux_deps.h"
 #include "vmlinux.h"
 

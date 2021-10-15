@@ -1,5 +1,3 @@
-uclamp_bucket
-uclamp_rq
 rt_prio_array
 rt_rq
 dl_rq
