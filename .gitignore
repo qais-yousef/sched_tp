@@ -8,5 +8,5 @@ modules.order
 .tmp_versions
 *.mod
 .*.mod.cmd
-vmlinux_deps.h
+vmlinux_deps*.h
 vmlinux.h
