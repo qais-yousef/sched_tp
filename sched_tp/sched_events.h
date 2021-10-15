@@ -316,7 +316,13 @@ TRACE_EVENT(sched_cpu_capacity,
 	),
 
 	unsigned long scale_cpu = rq->cpu_capacity_orig;
+#ifdef CONFIG_ARM64
 	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
+#else
+#warning "arch_scale_freq_capacity() support on non ARM64 platforms needs attention"
+	unsigned long scale_freq = 0;
+#endif
+
 
 	TP_fast_assign(
 		__entry->cpu		= rq->cpu;
