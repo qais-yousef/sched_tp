@@ -11,9 +11,9 @@ VMLINUX_DEPS_TXT = vmlinux_deps.txt
 VMLINUX_TXT = vmlinux.txt
 
 ifeq ($(wildcard $(KERNEL_SRC)/vmlinux), )
-	VMLINUX = /sys/kernel/btf/vmlinux
+	VMLINUX ?= /sys/kernel/btf/vmlinux
 else
-	VMLINUX = $(KERNEL_SRC)/vmlinux
+	VMLINUX ?= $(KERNEL_SRC)/vmlinux
 endif
 
 all: $(VMLINUX_H)
