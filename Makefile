@@ -10,6 +10,8 @@ VMLINUX_DEPS_UCLAMP_TXT = vmlinux_deps_uclamp.txt
 VMLINUX_DEPS_TXT = vmlinux_deps.txt
 VMLINUX_TXT = vmlinux.txt
 
+KERNEL_SRC ?= /usr/lib/modules/$(shell uname -r)/build
+
 ifeq ($(wildcard $(KERNEL_SRC)/vmlinux), )
 	VMLINUX ?= /sys/kernel/btf/vmlinux
 else
