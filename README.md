@@ -22,7 +22,7 @@ if you're a developer and build your kernel with debuginfo enabled.
 # Requirements
 
 - pahole v1.15 or above for vmlinux + DWARF. For vmlinux + BTF support you need
-  to compile from HEAD until next release is available.
+1.23 or above.
 
 `sudo apt install dwarves`
 
