@@ -26,13 +26,48 @@ if you're a developer and build your kernel with debuginfo enabled.
 
 `sudo apt install dwarves`
 
+## Warning
+
+If you have pahole older than v1.23 and are using BTF, then the module will
+compile but you most likely to get weird kernel crashes when loading the
+module. There's an alignment problem and we'll end up accessing data from
+misaligned offsets.
+
+At the time of writing v1.23 is not released yet and you must compile it from
+source to get it.
+
+[https://github.com/acmel/dwarves](https://github.com/acmel/dwarves)
+
 # Usage
 
 ## Building natively
 
+### BTF requirements
+
+The kernel you're running must have been compiled with these configs:
+
+- CONFIG_DEBUG_INFO_BTF=y
+- CONFIG_DEBUG_INFO_REDUCE is not set
+
+### DWARF requirements
+
+The kernel you're running must have been compiled with these configs:
+
+- CONFIG_DEBUG_INFO=y
+- CONFIG_DEBUG_INFO_REDUCE is not set
+
+### Command
+
+Override `VMLINUX` variable to point to your BTF/DWARF vmlinux.
+Override `KERNEL_SRC` variable to point to your exported kernel headers.
+
+Default values work on Ubuntu for vmlinux + BTF. Getting DWARF vmlinux is a bit
+of a headache unless you're compiling your own kernel. BTF should be ON by
+default on most distros now.
+
 ```
 sudo apt install linux-headers-$(uname -r)
-KERNEL_SRC=/usr/src/linux-headers-$(uname -r) make
+make
 ```
 
 ## Cross compile
@@ -50,11 +85,12 @@ KERNEL_SRC=path/to/prebuilt/kernel/tree ARCH=arm64 CROSS_COMPILE=aarch64-linux-g
 
 ### Using BTF and CONFIG_IKHEADERS
 
-	WIP: Needs more testing especially for using CONFIG_IKHEADERS
+	WIP: Not really tested.
 
 If the system you're cross compiling for was built with
 
 - CONFIG_DEBUG_INFO_BTF=y
+- CONFIG_DEBUG_INFO_REDUCE is not set
 - CONFIG_IKHEADERS
 
 Then you can extract `/sys/kernel/btf/vmlinux` and
