@@ -47,7 +47,6 @@ source to get it.
 The kernel you're running must have been compiled with these configs:
 
 - CONFIG_DEBUG_INFO_BTF=y
-- CONFIG_DEBUG_INFO_REDUCE is not set
 
 ### DWARF requirements
 
@@ -90,7 +89,6 @@ KERNEL_SRC=path/to/prebuilt/kernel/tree ARCH=arm64 CROSS_COMPILE=aarch64-linux-g
 If the system you're cross compiling for was built with
 
 - CONFIG_DEBUG_INFO_BTF=y
-- CONFIG_DEBUG_INFO_REDUCE is not set
 - CONFIG_IKHEADERS
 
 Then you can extract `/sys/kernel/btf/vmlinux` and
