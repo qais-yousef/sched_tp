@@ -79,7 +79,7 @@ Must compile with these configs:
 - CONFIG_DEBUG_INFO_REDUCE is not set
 
 ```
-KERNEL_SRC=path/to/prebuilt/kernel/tree ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make
+make KERNEL_SRC=path/to/prebuilt/kernel/tree ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 ```
 
 ### Using BTF and CONFIG_IKHEADERS
@@ -97,5 +97,5 @@ Then you can extract `/sys/kernel/btf/vmlinux` and
 You will need to override VMLINUX variable to point to your extracted BTF.
 
 ```
-VMLINUX=path/to/extracted/btf KERNEL_SRC=path/to/extracted/kheaders ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make
+make VMLINUX=path/to/extracted/btf KERNEL_SRC=path/to/extracted/kheaders ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu-
 ```
