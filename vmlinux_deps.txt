@@ -1,3 +1,4 @@
+rt_bandwidth
 rt_prio_array
 rt_rq
 dl_rq
