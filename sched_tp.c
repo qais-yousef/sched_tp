@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0 */
 #include <linux/module.h>
 
+#include <linux/kprobes.h>
 #include <linux/sched.h>
 #include <trace/events/sched.h>
 
@@ -170,6 +171,31 @@ static void sched_cpu_capacity(void *data, struct rq *rq)
 }
 #endif
 
+static int sugov_should_update_freq_entryhandler(struct kretprobe_instance *ri,
+					       struct pt_regs *regs)
+{
+	return 0;
+}
+
+static int sugov_should_update_freq_rethandler(struct kretprobe_instance *ri,
+					       struct pt_regs *regs)
+{
+	struct sugov_policy *sg_policy =  (struct sugov_policy *)regs_get_kernel_argument(regs, 0);
+	u64 time = regs_get_kernel_argument(regs, 1);
+	unsigned long ret = regs_return_value(regs);
+
+	trace_printk("sg_policy = %p, time = %llu, ret = %lu\n",
+		     sg_policy, time, ret);
+
+	return 0;
+}
+
+static struct kretprobe sugov_suf_rp = {
+	.handler	= sugov_should_update_freq_rethandler,
+	.entry_handler	= sugov_should_update_freq_entryhandler,
+	.kp.symbol_name	= "sugov_should_update_freq"
+};
+
 static int sched_tp_init(void)
 {
 	register_trace_pelt_cfs_tp(sched_pelt_cfs, NULL);
@@ -186,6 +212,7 @@ static int sched_tp_init(void)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5,10,0)
 	register_trace_sched_cpu_capacity_tp(sched_cpu_capacity, NULL);
 #endif
+	register_kretprobe(&sugov_suf_rp);
 
 	return 0;
 }
@@ -206,6 +233,7 @@ static void sched_tp_finish(void)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5,10,0)
 	unregister_trace_sched_cpu_capacity_tp(sched_cpu_capacity, NULL);
 #endif
+	unregister_kretprobe(&sugov_suf_rp);
 }
 
 
