@@ -44,7 +44,7 @@ TRACE_EVENT(sched_pelt_cfs,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->path, path, PATH_SIZE);
 		__entry->load		= avg->load_avg;
 		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
 		__entry->util		= avg->util_avg;
@@ -114,8 +114,8 @@ TRACE_EVENT(sched_pelt_se,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
-		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		strscpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
 		__entry->load		= avg->load_avg;
 		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
@@ -141,7 +141,7 @@ TRACE_EVENT(sched_overutilized,
 
 	TP_fast_assign(
 		__entry->overutilized	= overutilized;
-		strlcpy(__entry->span, span, SPAN_SIZE);
+		strscpy(__entry->span, span, SPAN_SIZE);
 	),
 
 	TP_printk("overutilized=%d span=0x%s",
@@ -189,8 +189,8 @@ TRACE_EVENT(sched_util_est_se,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
-		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		strscpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
@@ -218,7 +218,7 @@ TRACE_EVENT(sched_util_est_cfs,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->path, path, PATH_SIZE);
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
 		__entry->util		= avg->util_avg;
