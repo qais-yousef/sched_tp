@@ -192,8 +192,13 @@ TRACE_EVENT(sched_util_est_se,
 		strscpy(__entry->path, path, PATH_SIZE);
 		strscpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,8,0)
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
+#else
+		__entry->enqueued	= avg->util_est;
+		__entry->ewma		= avg->util_est;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
@@ -219,8 +224,13 @@ TRACE_EVENT(sched_util_est_cfs,
 	TP_fast_assign(
 		__entry->cpu		= cpu;
 		strscpy(__entry->path, path, PATH_SIZE);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,8,0)
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
+#else
+		__entry->enqueued	= avg->util_est;
+		__entry->ewma		= avg->util_est;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
