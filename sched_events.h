@@ -327,14 +327,22 @@ TRACE_EVENT(sched_cpu_capacity,
 		__field(	unsigned long,	capacity_curr	)
 	),
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,7,0)
 	unsigned long scale_cpu = rq->cpu_capacity_orig;
-#ifdef CONFIG_ARM64
+ #ifdef CONFIG_ARM64
 	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
+ #else
+	unsigned long scale_freq = SCHED_CAPACITY_SCALE;
+ #endif
 #else
-#warning "arch_scale_freq_capacity() support on non ARM64 platforms needs attention"
-	unsigned long scale_freq = 0;
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,10,0) && defined(CONFIG_X86)) || defined(CONFIG_ARM64)
+	unsigned long scale_cpu = arch_scale_freq_capacity(rq->cpu);
+	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
+ #else
+	unsigned long scale_cpu = SCHED_CAPACITY_SCALE;
+	unsigned long scale_freq = SCHED_CAPACITY_SCALE;
+ #endif
 #endif
-
 
 	TP_fast_assign(
 		__entry->cpu		= rq->cpu;
