@@ -44,7 +44,7 @@ TRACE_EVENT(sched_pelt_cfs,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->path, path, PATH_SIZE);
 		__entry->load		= avg->load_avg;
 		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
 		__entry->util		= avg->util_avg;
@@ -114,8 +114,8 @@ TRACE_EVENT(sched_pelt_se,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
-		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		strscpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
 		__entry->load		= avg->load_avg;
 		__entry->RBL_LOAD_ENTRY	= avg->RBL_LOAD_MEMBER;
@@ -141,7 +141,7 @@ TRACE_EVENT(sched_overutilized,
 
 	TP_fast_assign(
 		__entry->overutilized	= overutilized;
-		strlcpy(__entry->span, span, SPAN_SIZE);
+		strscpy(__entry->span, span, SPAN_SIZE);
 	),
 
 	TP_printk("overutilized=%d span=0x%s",
@@ -189,11 +189,16 @@ TRACE_EVENT(sched_util_est_se,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
-		strlcpy(__entry->comm, comm, TASK_COMM_LEN);
+		strscpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->comm, comm, TASK_COMM_LEN);
 		__entry->pid		= pid;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,8,0)
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
+#else
+		__entry->enqueued	= avg->util_est;
+		__entry->ewma		= avg->util_est;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
@@ -218,9 +223,14 @@ TRACE_EVENT(sched_util_est_cfs,
 
 	TP_fast_assign(
 		__entry->cpu		= cpu;
-		strlcpy(__entry->path, path, PATH_SIZE);
+		strscpy(__entry->path, path, PATH_SIZE);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,8,0)
 		__entry->enqueued	= avg->util_est.enqueued;
 		__entry->ewma		= avg->util_est.ewma;
+#else
+		__entry->enqueued	= avg->util_est;
+		__entry->ewma		= avg->util_est;
+#endif
 		__entry->util		= avg->util_avg;
 	),
 
@@ -317,14 +327,22 @@ TRACE_EVENT(sched_cpu_capacity,
 		__field(	unsigned long,	capacity_curr	)
 	),
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6,7,0)
 	unsigned long scale_cpu = rq->cpu_capacity_orig;
-#ifdef CONFIG_ARM64
+ #ifdef CONFIG_ARM64
 	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
+ #else
+	unsigned long scale_freq = SCHED_CAPACITY_SCALE;
+ #endif
 #else
-#warning "arch_scale_freq_capacity() support on non ARM64 platforms needs attention"
-	unsigned long scale_freq = 0;
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,10,0) && defined(CONFIG_X86)) || defined(CONFIG_ARM64)
+	unsigned long scale_cpu = arch_scale_freq_capacity(rq->cpu);
+	unsigned long scale_freq = arch_scale_freq_capacity(rq->cpu);
+ #else
+	unsigned long scale_cpu = SCHED_CAPACITY_SCALE;
+	unsigned long scale_freq = SCHED_CAPACITY_SCALE;
+ #endif
 #endif
-
 
 	TP_fast_assign(
 		__entry->cpu		= rq->cpu;

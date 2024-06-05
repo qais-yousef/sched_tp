@@ -70,7 +70,7 @@ static inline void cfs_rq_tg_path(struct cfs_rq *cfs_rq, char *path, int len)
 		cgroup_path(cfs_rq->tg->css.cgroup, path, len);
 	else
 #endif
-		strlcpy(path, "(null)", len);
+		strscpy(path, "(null)", len);
 }
 
 /* A cut down version of the original. @p MUST be NULL */
@@ -107,7 +107,7 @@ static inline char *sched_tp_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int l
 {
 	if (!cfs_rq) {
 		if (str)
-			strlcpy(str, "(null)", len);
+			strscpy(str, "(null)", len);
 		else
 			return NULL;
 	}
