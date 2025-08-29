@@ -18,6 +18,9 @@ else
 	VMLINUX ?= $(KERNEL_SRC)/vmlinux
 endif
 
+# Check if CONFIG_UCLAMP_TASK is enabled in kernel config
+UCLAMP_ENABLED := $(shell grep -q "CONFIG_UCLAMP_TASK=y" $(KERNEL_SRC)/.config && echo "yes" || echo "no")
+
 all: $(VMLINUX_H)
 	make -C $(KERNEL_SRC) M=$(PWD) modules
 
@@ -26,8 +29,13 @@ clean:
 	rm -f $(VMLINUX_H) $(VMLINUX_DEPS_H) $(VMLINUX_DEPS_UCLAMP_H)
 
 $(VMLINUX_DEPS_UCLAMP_H): $(VMLINUX_DEPS_UCLAMP_TXT) $(VMLINUX)
+ifeq ($(UCLAMP_ENABLED),yes)
 	@rm -f $@
 	pahole -C file://$(VMLINUX_DEPS_UCLAMP_TXT) $(VMLINUX) >> $@
+else
+	@echo "CONFIG_UCLAMP_TASK not enabled, skipping uclamp deps generation"
+	@touch $@
+endif
 
 $(VMLINUX_DEPS_H): $(VMLINUX_DEPS_TXT) $(VMLINUX)
 	@rm -f $@
