@@ -43,7 +43,7 @@ ifeq ($(shell pahole --version), v1.15)
 	@echo "pahole version v1.15: applying workaround..."
 	@echo "typedef int (*cpu_stop_fn_t)(void *arg);" > $@;
 endif
-	pahole -C file://$(VMLINUX_DEPS_TXT) $(VMLINUX) >> $@
+	pahole -C file://$(VMLINUX_DEPS_TXT) --skip_missing $(VMLINUX) >> $@
 
 $(VMLINUX_H): $(VMLINUX_DEPS_UCLAMP_H) $(VMLINUX_DEPS_H) $(VMLINUX_TXT) $(VMLINUX)
-	pahole -C file://$(VMLINUX_TXT) $(VMLINUX) > $@
+	pahole -C file://$(VMLINUX_TXT) --skip_missing $(VMLINUX) > $@
