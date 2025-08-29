@@ -1,5 +1,11 @@
 obj-m += sched_tp.o
 
+ifneq ($(KERNELRELEASE),)
+# Module build inside kernel build system
+ccflags-y += -I$(M) -I$(src)
+else
+# External module build
+
 # Compiler selection - can be overridden: make CC=clang
 # Default to clang if available, fallback to gcc
 ifeq ($(origin CC),default)
@@ -34,8 +40,9 @@ else ifeq ($(BUILD_TYPE),aggressive)
 	EXTRA_CFLAGS += -DNDEBUG -O3 -funroll-loops
 endif
 
-# Additional configurable flags
-EXTRA_CFLAGS += -I$(src)
+# Additional configurable flags  
+EXTRA_CFLAGS += -I$(PWD)
+ccflags-y += -I$(PWD)
 
 # Architecture-specific optimizations
 ifneq ($(ARCH_OPTS),)
@@ -162,6 +169,9 @@ endif
 
 $(VMLINUX_H): $(VMLINUX_DEPS_UCLAMP_H) $(VMLINUX_DEPS_H) $(VMLINUX_TXT) $(VMLINUX)
 	pahole -C file://$(VMLINUX_TXT) --skip_missing $(VMLINUX) > $@
+
+# End of external module build
+endif
 
 # Declare phony targets
 .PHONY: all debug release aggressive gcc clang debug-gcc debug-clang \
