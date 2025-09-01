@@ -361,5 +361,6 @@ TRACE_EVENT(sched_cpu_capacity,
 /* This part must be outside protection */
 #undef TRACE_INCLUDE_PATH
 #define TRACE_INCLUDE_PATH .
+#undef TRACE_INCLUDE_FILE
 #define TRACE_INCLUDE_FILE sched_events
 #include <trace/define_trace.h>
