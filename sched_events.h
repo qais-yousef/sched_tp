@@ -16,6 +16,9 @@
 #include <linux/version.h>
 
 #include "sched_tp_helpers.h"
+#ifndef arch_scale_freq_capacity
+#define arch_scale_freq_capacity(a) SCHED_CAPACITY_SCALE
+#endif
 
 #if LINUX_VERSION_CODE <= KERNEL_VERSION(5,6,0)
 #define RBL_LOAD_ENTRY		rbl_load
