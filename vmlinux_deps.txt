@@ -7,3 +7,5 @@ cpu_stop_work
 dl_bw
 cpudl
 cpupri_vec
+balance_callback
+scx_rq
