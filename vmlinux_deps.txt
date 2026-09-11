@@ -8,4 +8,5 @@ dl_bw
 cpudl
 cpupri_vec
 balance_callback
+scx_rq_rescue
 scx_rq
