@@ -132,7 +132,8 @@ static void sched_overutilized(void *data, struct root_domain *rd, bool overutil
 	if (trace_sched_overutilized_enabled()) {
 		char span[SPAN_SIZE];
 
-		cpumap_print_to_pagebuf(false, span, sched_tp_rd_span(rd));
+		snprintf(span, SPAN_SIZE, "%*pb\n",
+			 cpumask_pr_args(sched_tp_rd_span(rd)));
 
 		trace_sched_overutilized(overutilized, span);
 	}
